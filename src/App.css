@@ -1,0 +1,32 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.caveat-variable-google-font {
+  font-family: "Caveat", cursive;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+* {
+    font-family: "Caveat";
+}
+
+.journal {
+    column-count: 2;
+    background-image: url("./assets/notebook.png");
+    background-size: 100% 100%; /* width and height, can be %, px or whatever. */
+    padding: 20px 40px;
+    column-gap: 40px;
+}
+
+.journal img {
+    max-width: 50%;
+    max-height: 30%;
+    float: left;
+    margin: 10px;
+    filter: blur(0.02em) saturate(0.7) sepia(30%) contrast(1.0) brightness(1.0);
+}
