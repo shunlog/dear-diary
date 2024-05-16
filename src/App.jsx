@@ -37,16 +37,17 @@ function strToHTML(html, trim = true) {
 }
 
 function App() {
-  const [journalStr, setJournalStr] = useState("");
+  const [journalStr, setJournalStr] = useState(localStorage.getItem("journalStr"));
 
   const updateMarkdownText = (text) => {
     // convert the markdown text to html
-    let converter = new showdown.Converter({
+    const converter = new showdown.Converter({
       tables: true
     });
-    let html_str = converter.makeHtml(text);
+    const html_str = converter.makeHtml(text);
 
     setJournalStr(html_str);
+    localStorage.setItem("journalStr", html_str);
   }
 
   const handleImgsUpload = (e) => {
