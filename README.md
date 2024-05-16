@@ -1,8 +1,19 @@
-# React + Vite
+# Dear diary
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Transform your markdown journal notes into a beautiful diary.
 
-Currently, two official plugins are available:
+# Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Here's how you can test this app:
+1. Download the [test files](https://drive.google.com/file/d/1W1bWgwmglwwu7nmt2xFDWQGDBFOzt3-U/view?usp=sharing)
+2. In [the app](https://shunlog.github.io/dear-diary/), Import the markdown (`.md`) file
+3. Import all the images, notice how they're matched automatically
+4. Refresh the page. Notice that the text remains, but not the images.
+
+# Develop
+
+``` sh
+npm install
+npm run dev
+npm run deploy
+```
