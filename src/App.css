@@ -25,3 +25,7 @@
   margin: 10px;
   filter: blur(0.02em) saturate(0.7) sepia(30%) contrast(1.0) brightness(1.0);
 }
+
+.journal :is(h1, h2, h3, h4, h5, h6) {
+  color: #710505;
+}
