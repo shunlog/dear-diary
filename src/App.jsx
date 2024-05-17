@@ -56,7 +56,13 @@ function App() {
     return todayDate();
   }
 
-  const [journalStr, setJournalStr] = useState(localStorage.getItem("journalStr"));
+  const getJournalStr = () => {
+    const s = localStorage.getItem("journalStr");
+    if (s !== null ) return s;
+    return "<h1> Nothing here yet </h1> </br> Import a markdown file to get started.";
+  }
+
+  const [journalStr, setJournalStr] = useState(getJournalStr());
   const [selDate, setSelDate] = useState(getSelDate());
 
   const updateMarkdownText = (text) => {
