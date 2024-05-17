@@ -52,18 +52,22 @@ function todayDate(){
 function App() {
   const getSelDate = () => {
     const d = localStorage.getItem("journalDate");
-    if (d !== null) return new Date(d);
+    if (d !== null) return dateToInputValueStr( new Date(d));
     return todayDate();
   }
 
-  const getJournalStr = () => {
-    const s = localStorage.getItem("journalStr");
+  const getJournalStr = (dstr) => {
+    const s = localStorage.getItem("journalStr" + dstr);
     if (s !== null ) return s;
     return "<h1> Nothing here yet </h1> </br> Import a markdown file to get started.";
   }
 
-  const [journalStr, setJournalStr] = useState(getJournalStr());
+  const storeJournalStr = (s, dstr) => {
+    localStorage.setItem("journalStr" + dstr, s);
+  }
+
   const [selDate, setSelDate] = useState(getSelDate());
+  const [journalStr, setJournalStr] = useState(getJournalStr(selDate));
 
   const updateMarkdownText = (text) => {
     // convert the markdown text to html
@@ -73,7 +77,7 @@ function App() {
     const html_str = converter.makeHtml(text);
 
     setJournalStr(html_str);
-    localStorage.setItem("journalStr", html_str);
+    storeJournalStr(html_str, selDate);
   }
 
   const handleImgsUpload = (e) => {
@@ -102,8 +106,10 @@ function App() {
     const date_str = dateToInputValueStr( new_date);
     setSelDate(date_str);
     localStorage.setItem("journalDate", date_str);
+    setJournalStr(getJournalStr(date_str));
   }
 
+  console.log(selDate);
 
   return (
     <>
