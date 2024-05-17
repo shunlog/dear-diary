@@ -54,7 +54,17 @@ function App() {
     return todayDate();
   }
 
-  const [journalStr, setJournalStr] = useState(localStorage.getItem("journalStr"));
+  const getJournalStr = (selDateStr) => {
+     const s = localStorage.getItem("journalStr" + selDateStr);
+    if (s !== null) return s;
+    return "";
+  }
+
+  const storeJournalStr = (s, selDateStr) => {
+    localStorage.setItem("journalStr" + selDateStr, s);
+  }
+
+  const [journalStr, setJournalStr] = useState(getJournalStr());
   const [selDate, setSelDate] = useState(getSelDate());
 
   const updateMarkdownText = (text) => {
@@ -65,7 +75,7 @@ function App() {
     const html_str = converter.makeHtml(text);
 
     setJournalStr(html_str);
-    localStorage.setItem("journalStr", html_str);
+    storeJournalStr(html_str, selDate)
   }
 
   const handleImgsUpload = (e) => {
