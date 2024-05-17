@@ -36,8 +36,28 @@ function strToHTML(html, trim = true) {
   return div;
 }
 
+function dateToInputValueStr(d){
+
+  console.log(d);
+  return d.toISOString().split('T')[0];
+}
+
+function todayDate(){
+  const dnow = new Date();
+  const offset = dnow.getTimezoneOffset();
+  const offset_now = new Date(dnow.getTime() - (offset*60*1000));
+  return dateToInputValueStr(offset_now);
+}
+
 function App() {
+  const getSelDate = () => {
+    const d = localStorage.getItem("journalDate");
+    if (d !== null) return new Date(d);
+    return todayDate();
+  }
+
   const [journalStr, setJournalStr] = useState(localStorage.getItem("journalStr"));
+  const [selDate, setSelDate] = useState(getSelDate());
 
   const updateMarkdownText = (text) => {
     // convert the markdown text to html
@@ -70,6 +90,14 @@ function App() {
     readFile(e.target.files[0], updateMarkdownText);
   };
 
+  const handleDateChange = (e) => {
+    const dstr = e.target.value;
+    const new_date = new Date(dstr);
+    const date_str = dateToInputValueStr( new_date);
+    setSelDate(date_str);
+    localStorage.setItem("journalDate", date_str);
+  }
+
 
   return (
     <>
@@ -79,6 +107,9 @@ function App() {
 
       <p>
         Select images: <input type="file" id="input" multiple onChange={handleImgsUpload} />
+      </p>
+      <p>
+        Select date: <input type="date" value={selDate} onChange={handleDateChange} />
       </p>
 
       <article className="journal" dangerouslySetInnerHTML={{ __html: journalStr }}>
