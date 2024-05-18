@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './App.css'
+import './Journal.css'
 import showdown  from 'showdown'
 
 const readFile = (f, callback) => {
@@ -37,8 +37,6 @@ function strToHTML(html, trim = true) {
 }
 
 function dateToInputValueStr(d){
-
-  console.log(d);
   return d.toISOString().split('T')[0];
 }
 
@@ -49,7 +47,7 @@ function todayDate(){
   return dateToInputValueStr(offset_now);
 }
 
-function App() {
+function Journal() {
   const getSelDate = () => {
     const d = localStorage.getItem("journalDate");
     if (d !== null) return dateToInputValueStr( new Date(d));
@@ -69,12 +67,12 @@ function App() {
   const [selDate, setSelDate] = useState(getSelDate());
   const [journalStr, setJournalStr] = useState(getJournalStr(selDate));
 
-  const updateMarkdownText = (text) => {
+  const updateMarkdownText = (md_str) => {
     // convert the markdown text to html
     const converter = new showdown.Converter({
       tables: true
     });
-    const html_str = converter.makeHtml(text);
+    const html_str = converter.makeHtml(md_str);
 
     setJournalStr(html_str);
     storeJournalStr(html_str, selDate);
@@ -100,16 +98,43 @@ function App() {
     readFile(e.target.files[0], updateMarkdownText);
   };
 
-  const handleDateChange = (e) => {
-    const dstr = e.target.value;
-    const new_date = new Date(dstr);
-    const date_str = dateToInputValueStr( new_date);
+  const setDate = (date_str) => {
     setSelDate(date_str);
     localStorage.setItem("journalDate", date_str);
     setJournalStr(getJournalStr(date_str));
   }
 
-  console.log(selDate);
+  const handleDateChange = (e) => {
+    setDate(e.target.value);
+  }
+
+  const getNextDate = (d_str, backward=false) => {
+    const d = new Date(d_str);
+    const inc = backward ? -1 : 1;
+    for (let i = 0; i < 3000; i++) {
+      d.setDate(d.getDate() + inc);
+      const date_str = dateToInputValueStr(d);
+      const s = localStorage.getItem("journalStr" + date_str);
+      if (s !== null) {
+        return date_str;
+      }
+    }
+    return null;
+  }
+
+  const handleButtonPrev = (e) => {
+    const date_str = getNextDate(selDate, true);
+    if (date_str) {
+      setDate(date_str);
+    }
+  }
+
+  const handleButtonNext = (e) => {
+    const date_str = getNextDate(selDate);
+    if (date_str) {
+      setDate(date_str);
+    }
+  }
 
   return (
     <>
@@ -123,6 +148,10 @@ function App() {
       <p>
         Select date: <input type="date" value={selDate} onChange={handleDateChange} />
       </p>
+      <p>
+        <input name="" type="button" value="Prev" onClick={handleButtonPrev} />
+        <input name="" type="button" value="Next" onClick={handleButtonNext} />
+      </p>
 
       <article className="journal" dangerouslySetInnerHTML={{ __html: journalStr }}>
       </article>
@@ -130,4 +159,4 @@ function App() {
   )
 }
 
-export default App
+export default Journal
