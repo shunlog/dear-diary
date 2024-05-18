@@ -55,13 +55,16 @@ function Journal() {
   }
 
   const getJournalStr = (dstr) => {
-    const s = localStorage.getItem("journalStr" + dstr);
-    if (s !== null ) return s;
-    return "<h1> Nothing here yet </h1> </br> Import a markdown file to get started.";
+    return localStorage.getItem("journalStr" + dstr);
   }
+  const default_journalStr = "<h1> Nothing here yet </h1> </br> Import a markdown file to get started.";
 
   const storeJournalStr = (s, dstr) => {
     localStorage.setItem("journalStr" + dstr, s);
+  }
+
+  const clearJournalStr = (dstr) => {
+    localStorage.removeItem("journalStr" + dstr);
   }
 
   const [selDate, setSelDate] = useState(getSelDate());
@@ -136,6 +139,11 @@ function Journal() {
     }
   }
 
+  const handleButtonClearEntry = (e) => {
+    setJournalStr('');
+    clearJournalStr(selDate);
+  }
+
   return (
     <>
       <p>
@@ -149,11 +157,14 @@ function Journal() {
         Select date: <input type="date" value={selDate} onChange={handleDateChange} />
       </p>
       <p>
-        <input name="" type="button" value="Prev" onClick={handleButtonPrev} />
-        <input name="" type="button" value="Next" onClick={handleButtonNext} />
+        <input name="" type="button" value="Previous entry" onClick={handleButtonPrev} />
+        <input name="" type="button" value="Next entry" onClick={handleButtonNext} />
+      </p>
+      <p>
+        <input name="" type="button" value="Clear entry" disabled={!journalStr} onClick={handleButtonClearEntry} />
       </p>
 
-      <article className="journal" dangerouslySetInnerHTML={{ __html: journalStr }}>
+      <article className="journal" dangerouslySetInnerHTML={{ __html: journalStr || default_journalStr }}>
       </article>
     </>
   )
