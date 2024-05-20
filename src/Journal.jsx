@@ -1,6 +1,30 @@
-import { useState } from 'react'
+"use strict";
+import { useState, useEffect } from 'react'
 import './Journal.css'
 import showdown  from 'showdown'
+
+
+export function fetchEntries() {
+  return fetch('http://127.0.0.1:8000/entries/')
+    .then(data => data.json())
+}
+
+export function fetchEntry(id) {
+  return fetch(`http://127.0.0.1:8000/entries/${id}`)
+    .then(data => data.json())
+}
+
+export function postEntry(text, date) {
+  return fetch(`http://localhost:8000/entries/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ text: text, date: date, author: 1 })
+  })
+    .then(data => data.json())
+}
+
 
 const readFile = (f, callback) => {
   // start asynchronously reading the file
@@ -69,6 +93,7 @@ function Journal() {
 
   const [selDate, setSelDate] = useState(getSelDate());
   const [journalStr, setJournalStr] = useState(getJournalStr(selDate));
+  const [dates, setDates] = useState([]);
 
   const updateMarkdownText = (md_str) => {
     // convert the markdown text to html
@@ -79,6 +104,8 @@ function Journal() {
 
     setJournalStr(html_str);
     storeJournalStr(html_str, selDate);
+
+    postEntry(html_str, selDate);
   }
 
   const handleImgsUpload = (e) => {
@@ -144,25 +171,62 @@ function Journal() {
     clearJournalStr(selDate);
   }
 
+  const handleButtonTest = (e) => {
+    const d = fetchEntry(0);
+    console.log(d);
+  }
+
+  useEffect(() => {
+    let mounted = true;
+    fetchEntry(0)
+      .then(item => {
+        if(mounted) {
+          console.log(item);
+        }
+      })
+    return () => mounted = false;
+  }, [])
+
+  useEffect(() => {
+    let mounted = true;
+    fetchEntries()
+      .then(items => {
+        if(mounted) {
+          console.log(items);
+          setDates(items.results);
+        }
+      })
+    return () => mounted = false;
+  }, [])
+
+
+  const datesList = dates.map((d) => <li key={d.id}>{d.date}</li>);
+
   return (
     <>
-      <p>
+      <div>
         Import file: <input type="file" onChange={handleFileChange} />
-      </p>
-
-      <p>
+      </div>
+      <div>
         Select images: <input type="file" id="input" multiple onChange={handleImgsUpload} />
-      </p>
-      <p>
+      </div>
+      <div>
         Select date: <input type="date" value={selDate} onChange={handleDateChange} />
-      </p>
-      <p>
+      </div>
+      <div>
         <input name="" type="button" value="Previous entry" onClick={handleButtonPrev} />
         <input name="" type="button" value="Next entry" onClick={handleButtonNext} />
-      </p>
-      <p>
+      </div>
+      <div>
         <input name="" type="button" value="Clear entry" disabled={!journalStr} onClick={handleButtonClearEntry} />
-      </p>
+      </div>
+      <div>
+        <input name="" type="button" value="Test API"  onClick={handleButtonTest} />
+      </div>
+
+      <ul>
+        {datesList}
+      </ul>
 
       <article className="journal" dangerouslySetInnerHTML={{ __html: journalStr || default_journalStr }}>
       </article>
